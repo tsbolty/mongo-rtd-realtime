@@ -12,15 +12,15 @@ const vehiclePosition = 'https://www.rtd-denver.com/files/gtfs-rt/VehiclePositio
 const tripUpdate = 'https://www.rtd-denver.com/files/gtfs-rt/TripUpdate.pb';
 const alerts = 'https://www.rtd-denver.com/files/gtfs-rt/Alerts.pb';
 
-// tripUpdateData()
-// vehiclePositionData()
-// alertData()
-// setInterval(()=>{
-  //   setTimeout(tripUpdateData, 2000)
-  //   setTimeout(vehiclePositionData, 2000)
-  //   setTimeout(alertData, 2000)
-// }, 30000)
-grabValues()
+tripUpdateData()
+vehiclePositionData()
+alertData()
+setInterval(()=>{
+    setTimeout(tripUpdateData, 2000)
+    setTimeout(vehiclePositionData, 2000)
+    setTimeout(alertData, 2000)
+}, 30000)
+// grabValues()
   
 function grabValues() {
   // THIS FUNCTION IS SET UP TO CONSOLE LOG SPECIFIC VALUES OF THE ARRAY. JUST CHANGE THE URL TO ANY ONE OF THE VARIABLES AND TWEAK THE CONSOLE.LOG/ MAP
@@ -33,8 +33,8 @@ function grabValues() {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
       feed.entity.map(entity => {
-        if (entity.vehicle.vehicle) {
-          console.log(entity.vehicle.vehicle.label)
+        if (entity.vehicle.vehicle.label.length < 4) {
+          console.log(entity)
         } else {
           console.log("none")
         }
@@ -54,11 +54,9 @@ function tripUpdateData() {
   return request(requestSettings, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-      const insertValues = feed.entity.map(entity => {
+      const insertValues = feed.entity.filter(entity => {
         if (entity) {
-          return entity
-        } else {
-          return false
+          return true
         }
       });
       return db.trip_update.insertMany(insertValues, (err, data) => {
@@ -80,11 +78,9 @@ function vehiclePositionData() {
   return request(requestSettings, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-      const insertValues = feed.entity.map(entity => {
-        if (entity) {
-          return entity
-        } else {
-          return false
+      const insertValues = feed.entity.filter(entity => {
+        if (entity.vehicle && entity.vehicle.vehicle.label.length < 4) {
+          return true
         }
       });
       return db.vehicle_position.insertMany(insertValues, (err, data) => {
@@ -106,11 +102,9 @@ function alertData() {
   return request(requestSettings, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-      const insertValues = feed.entity.map(entity => {
+      const insertValues = feed.entity.filter(entity => {
         if (entity) {
-          return entity
-        } else {
-          return false
+          return true
         }
       });
       return db.alerts.insertMany(insertValues, (err, data) => {
