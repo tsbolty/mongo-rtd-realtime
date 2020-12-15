@@ -12,36 +12,33 @@ const vehiclePosition = 'https://www.rtd-denver.com/files/gtfs-rt/VehiclePositio
 const tripUpdate = 'https://www.rtd-denver.com/files/gtfs-rt/TripUpdate.pb';
 const alerts = 'https://www.rtd-denver.com/files/gtfs-rt/Alerts.pb';
 
-tripUpdateData()
-vehiclePositionData()
-alertData()
-// grabValues()
-setInterval(()=>{
-  setTimeout(tripUpdateData, 2000)
-  setTimeout(vehiclePositionData, 2000)
-  setTimeout(alertData, 2000)
-}, 30000)
-
+// tripUpdateData()
+// vehiclePositionData()
+// alertData()
+// setInterval(()=>{
+  //   setTimeout(tripUpdateData, 2000)
+  //   setTimeout(vehiclePositionData, 2000)
+  //   setTimeout(alertData, 2000)
+// }, 30000)
+grabValues()
+  
 function grabValues() {
+  // THIS FUNCTION IS SET UP TO CONSOLE LOG SPECIFIC VALUES OF THE ARRAY. JUST CHANGE THE URL TO ANY ONE OF THE VARIABLES AND TWEAK THE CONSOLE.LOG/ MAP
   const requestSettings = {
     method: 'GET',
-    url: tripUpdate,
+    url: vehiclePosition,
     encoding: null
   };
   return request(requestSettings, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-      const insertValues = feed.entity.map(entity => {
-        if (entity) {
-          return entity
+      feed.entity.map(entity => {
+        if (entity.vehicle.vehicle) {
+          console.log(entity.vehicle.vehicle.label)
         } else {
-          return false
+          console.log("none")
         }
       });
-      return db.trip_update.insertMany(insertValues, (err, data) => {
-        if (err) { console.log(err) }
-        console.log(data)
-      })
     } else {
       console.log("Wrong path")
     }
