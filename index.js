@@ -121,36 +121,3 @@ function grabValues() {
     }
   });
 }
-
-// I'M LEAVING THIS FUNCTION HERE IN CASE WE WANT TO GO BACK TO HAVING 1 COLLECTION FOR EACH SOURCE OF DATA
-
-// function tripUpdateData() {
-//   const requestSettings = {
-  //     method: 'GET',
-//     url: tripUpdate,
-//     encoding: null
-//   };
-//   return request(requestSettings, function (error, response, body) {
-  //     if (!error && response.statusCode == 200) {
-//       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-//       const insertValues = feed.entity.filter(entity => {
-//         if (entity && entity.tripUpdate && entity.tripUpdate.trip && !tripIds.includes(entity.tripUpdate.trip.tripId)) {
-//           return true
-//         }
-//       });
-//       db.trip_update.insertMany(insertValues, (err, data) => {
-//         if (err) { console.log(err) }
-//         console.log(data)
-//       })
-      // insertValues.forEach(value => {
-      //   return db.vehicle_position.update({ vehicle: { trip: { tripId: value.tripUpdate.trip.tripId } } }, { $set: { alert: value } }, {new: true}, (err, data) => {
-      //     if (err) { console.log(err) }
-      //     console.log(data)
-      //   })
-      // })
-//     } else {
-//       console.log("Wrong path")
-//     }
-
-//   });
-// }
