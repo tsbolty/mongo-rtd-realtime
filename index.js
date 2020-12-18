@@ -17,6 +17,8 @@ const tripUpdate = 'https://www.rtd-denver.com/files/gtfs-rt/TripUpdate.pb';
 const alerts = 'https://www.rtd-denver.com/files/gtfs-rt/Alerts.pb';
 
 // WILL RUN QUERIES AND SET DATABASE AT WHATEVER INTERVAL
+vehiclePositionData()
+alertData()
 setInterval(() => {
   setTimeout(vehiclePositionData, 2000)
   setTimeout(alertData, 2000)
@@ -61,12 +63,7 @@ async function vehiclePositionData() {
   await request(requestSettings, async function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
-      insertValues = feed.entity.filter(entity => {
-        // PRETTY SURE THIS FILTER ONLY RETURNS TRAINS (ASSUMING TRAINS' LABEL LENGTH IS < 4 AND BUSSES LABEL LENGTH IS >= 4)
-        if (entity.vehicle && entity.vehicle.vehicle.label.length < 4) {
-          return true
-        }
-      });
+      insertValues = feed.entity.filter(entity => entity.vehicle);        
     } else {
       console.log("Error requesting vehicle position data")
     }
@@ -82,7 +79,7 @@ async function vehiclePositionData() {
       // LOOPS THROUGH INSERTVALUES ARRAY AND ADDS TRIP UPDATE DATA TO THE OBJECT WITH THE SAME TRIPID NUMBER
       for (let i = 0; i < insertValues.length; i++) {
         for (data of feed.entity) {
-          if (data.tripUpdate.trip.tripId === insertValues[i].vehicle.trip.tripId) {
+          if (insertValues[i].vehicle.trip && data.tripUpdate.trip.tripId === insertValues[i].vehicle.trip.tripId) {
             insertValues[i].tripUpdate = data
           }
         }
