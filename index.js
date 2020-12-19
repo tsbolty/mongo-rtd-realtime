@@ -17,13 +17,13 @@ const tripUpdate = 'https://www.rtd-denver.com/files/gtfs-rt/TripUpdate.pb';
 const alerts = 'https://www.rtd-denver.com/files/gtfs-rt/Alerts.pb';
 
 // WILL RUN QUERIES AND SET DATABASE AT WHATEVER INTERVAL
-vehiclePositionData()
-alertData()
-setInterval(() => {
-  setTimeout(vehiclePositionData, 2000)
-  setTimeout(alertData, 2000)
-}, 30000)
-// grabValues()
+// vehiclePositionData()
+// alertData()
+// setInterval(() => {
+//   setTimeout(vehiclePositionData, 2000)
+//   setTimeout(alertData, 2000)
+// }, 30000)
+grabValues()
 
 // FUNCTION TO RETRIEVE ALERTS AND POST TO DB
 function alertData() {
@@ -103,21 +103,21 @@ function grabValues() {
   // THIS FUNCTION IS SET UP TO CONSOLE LOG SPECIFIC VALUES OF THE ARRAY. JUST CHANGE THE URL TO ANY ONE OF THE VARIABLES AND TWEAK THE CONSOLE.LOG/ MAP
   const requestSettings = {
     method: 'GET',
-    url: vehiclePosition,
+    url: 'https://www.rtd-denver.com/files/gtfs/google_transit.zip',
     encoding: null
   };
   return request(requestSettings, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(body);
       feed.entity.map(entity => {
-        if (entity.vehicle.vehicle.label.length < 4) {
+        if (entity) {
           console.log(entity)
         } else {
           console.log("none")
         }
       });
     } else {
-      console.log("Wrong path")
+      console.log(error)
     }
   });
 }
